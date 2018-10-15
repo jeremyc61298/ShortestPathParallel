@@ -1,3 +1,10 @@
+// -------------------------------------------------
+// shortest.cpp
+// Jeremy Campbell
+// Uses the Floyd-Warshall Algorithm to find the 
+// shortest path between two locations in parallel
+// using OpenMP.
+// -------------------------------------------------
 #include <iostream>
 #include <omp.h>
 #include <vector>
