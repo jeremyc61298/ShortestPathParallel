@@ -29,7 +29,7 @@ void readRoads(vector<vector<double>> &adjacency, const int numRoads)
 
 void readRoutes(vector<vector<int>> &routes)
 {
-	for (vector<int> route : routes)
+	for (vector<int> &route : routes)
 	{
 		int numLocations;
 		cin >> numLocations;
@@ -45,7 +45,8 @@ void readRoutes(vector<vector<int>> &routes)
 template <typename T>
 void print2DVector(vector<vector<T>> &v)
 {
-	for (vector<T> row : v)
+	// Const rational reference for speed
+	for (const vector<T> &row : v)
 	{
 		for (T col : row)
 		{
