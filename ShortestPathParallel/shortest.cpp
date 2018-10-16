@@ -27,11 +27,27 @@ void readRoads(vector<vector<double>> &adjacency, const int numRoads)
 	}
 }
 
-void printAdjacency(vector<vector<double>> &adjacency)
+void readRoutes(vector<vector<int>> &routes)
 {
-	for (vector<double> row : adjacency)
+	for (vector<int> route : routes)
 	{
-		for (double col : row)
+		int numLocations;
+		cin >> numLocations;
+		for (int i = 0; i < numLocations; i++)
+		{
+			int location;
+			cin >> location;
+			route.push_back(location);
+		}
+	}
+}
+
+template <typename T>
+void print2DVector(vector<vector<T>> &v)
+{
+	for (vector<T> row : v)
+	{
+		for (T col : row)
 		{
 			cout << col << " ";
 		}
@@ -41,13 +57,22 @@ void printAdjacency(vector<vector<double>> &adjacency)
 
 int main()
 {
-	int locations, roads;
-	cin >> locations >> roads;
-	vector<vector<double>> adjacency(locations, vector<double>(locations, INFINITY));
-	
-	readRoads(adjacency, roads);
+	int numLocations, numRoads;
+	cin >> numLocations >> numRoads;
+	vector<vector<double>> adjacency(numLocations, vector<double>(numLocations, INFINITY));
+	readRoads(adjacency, numRoads);
 
 #ifdef DEBUG
-	printAdjacency(adjacency);
+	print2DVector(adjacency);
 #endif
+
+	int numRoutes = 0;
+	cin >> numRoutes;
+	vector<vector<int>> routes(numRoutes);
+	readRoutes(routes);
+
+#ifdef DEBUG
+	print2DVector(routes);
+#endif
+
 }
