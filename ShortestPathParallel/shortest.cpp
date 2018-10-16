@@ -30,6 +30,10 @@ struct RoadMap
 	void readRoutes();
 	void computeShortestLengths();
 	void outputLengths();
+
+private:
+	void computeShortestPaths();
+		
 };
 
 void RoadMap::readRoads()
@@ -66,7 +70,13 @@ void RoadMap::readRoutes()
 
 void RoadMap::computeShortestLengths()
 {
+	
 
+}
+
+void RoadMap::computeShortestPaths()
+{
+	// Floyd-Warshall Algorithm
 }
 
 void RoadMap::outputLengths()
