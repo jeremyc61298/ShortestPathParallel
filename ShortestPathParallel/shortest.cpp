@@ -19,16 +19,25 @@ using std::vector;
 
 struct RoadMap
 {
+	// Parallel Vectors (routes and lengths) - the length of 
+	// each route is held in the corressponding index in
+	// the length vector
 	vector<vector<int>> routes;
+	vector<double> lengths;
 	vector<vector<double>> adjacency;
 
-	void readRoads(const int numLocations, const int numRoads);
-	void readRoutes(const int numRoutes);
+	void readRoads();
+	void readRoutes();
+	void computeShortestLengths();
+	void outputLengths();
 };
 
-void RoadMap::readRoads(const int numLocations, const int numRoads)
+void RoadMap::readRoads()
 {
+	int numLocations = 0, numRoads = 0;
+	cin >> numLocations >> numRoads;
 	adjacency.resize(numLocations, vector<double>(numLocations, INFINITY));
+
 	for (int i = 0; i < numRoads; i++)
 	{
 		int start, end;
@@ -37,8 +46,10 @@ void RoadMap::readRoads(const int numLocations, const int numRoads)
 	}
 }
 
-void RoadMap::readRoutes(const int numRoutes)
+void RoadMap::readRoutes()
 {
+	int numRoutes = 0;
+	cin >> numRoutes;
 	routes.resize(numRoutes);
 	for (vector<int> &route : routes)
 	{
@@ -53,12 +64,12 @@ void RoadMap::readRoutes(const int numRoutes)
 	}
 }
 
-void computeShortestLengths(vector<vector<int>> &routes, vector<vector<double>> adjacency)
+void RoadMap::computeShortestLengths()
 {
 
 }
 
-void outputLengths()
+void RoadMap::outputLengths()
 {
 
 }
@@ -80,17 +91,13 @@ void print2DVector(vector<vector<T>> &v)
 int main()
 {
 	RoadMap roadMap;
-	int numLocations, numRoads;
-	cin >> numLocations >> numRoads;
-	roadMap.readRoads(numLocations, numRoads);
+	roadMap.readRoads();
 
 #ifdef DEBUG
 	print2DVector(roadMap.adjacency);
 #endif
 
-	int numRoutes = 0;
-	cin >> numRoutes;
-	roadMap.readRoutes(numRoutes);
+	roadMap.readRoutes();
 
 #ifdef DEBUG
 	print2DVector(roadMap.routes);
