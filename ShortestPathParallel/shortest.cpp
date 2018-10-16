@@ -17,8 +17,18 @@ using std::vector;
 
 //#define DEBUG
 
-void readRoads(vector<vector<double>> &adjacency, const int numRoads)
+struct RoadMap
 {
+	vector<vector<int>> routes;
+	vector<vector<double>> adjacency;
+
+	void readRoads(const int numLocations, const int numRoads);
+	void readRoutes(const int numRoutes);
+};
+
+void RoadMap::readRoads(const int numLocations, const int numRoads)
+{
+	adjacency.resize(numLocations, vector<double>(numLocations, INFINITY));
 	for (int i = 0; i < numRoads; i++)
 	{
 		int start, end;
@@ -27,8 +37,9 @@ void readRoads(vector<vector<double>> &adjacency, const int numRoads)
 	}
 }
 
-void readRoutes(vector<vector<int>> &routes)
+void RoadMap::readRoutes(const int numRoutes)
 {
+	routes.resize(numRoutes);
 	for (vector<int> &route : routes)
 	{
 		int numLocations;
@@ -40,6 +51,16 @@ void readRoutes(vector<vector<int>> &routes)
 			route.push_back(location);
 		}
 	}
+}
+
+void computeShortestLengths(vector<vector<int>> &routes, vector<vector<double>> adjacency)
+{
+
+}
+
+void outputLengths()
+{
+
 }
 
 template <typename T>
@@ -58,22 +79,24 @@ void print2DVector(vector<vector<T>> &v)
 
 int main()
 {
+	RoadMap roadMap;
 	int numLocations, numRoads;
 	cin >> numLocations >> numRoads;
-	vector<vector<double>> adjacency(numLocations, vector<double>(numLocations, INFINITY));
-	readRoads(adjacency, numRoads);
+	roadMap.readRoads(numLocations, numRoads);
 
 #ifdef DEBUG
-	print2DVector(adjacency);
+	print2DVector(roadMap.adjacency);
 #endif
 
 	int numRoutes = 0;
 	cin >> numRoutes;
-	vector<vector<int>> routes(numRoutes);
-	readRoutes(routes);
+	roadMap.readRoutes(numRoutes);
 
 #ifdef DEBUG
-	print2DVector(routes);
+	print2DVector(roadMap.routes);
 #endif
 
+	// What next?
+	//computeShortestLengths(routes, adjacency);
+	//outputLengths();
 }
