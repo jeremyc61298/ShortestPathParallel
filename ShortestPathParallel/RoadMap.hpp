@@ -40,6 +40,7 @@ private:
 	template <typename T>
 	void print2DVector(vector<vector<T>> &v);
 	void computeShortestPaths();
+	void fillDistanceToSelf();
 };
 
 void RoadMap::readRoads()
@@ -123,6 +124,7 @@ void RoadMap::computeShortestLengths()
 // any 2 verticies in a graph
 void RoadMap::computeShortestPaths()
 {
+	fillDistanceToSelf();
 	const int locations = adjacency.size();
 	for (int k = 0; k < locations; k++)
 	{
@@ -134,6 +136,15 @@ void RoadMap::computeShortestPaths()
 				adjacency[i][j] = min(adjacency[i][j], adjacency[i][k] + adjacency[k][j]);
 			}
 		}
+	}
+}
+
+void RoadMap::fillDistanceToSelf()
+{
+#pragma omp for 
+	for (int i = 0; i < adjacency.size(); i++)
+	{
+		adjacency[i][i] = 0;
 	}
 }
 
