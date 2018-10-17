@@ -24,18 +24,25 @@ struct RoadMap
 	// Parallel Vectors (routes and lengths) - the length of 
 	// each route is held in the corressponding index in
 	// the length vector
-	vector<vector<int>> routes;
-	vector<double> lengths;
-	vector<vector<double>> adjacency;
-	vector<int> shortestRoute;
 
 	void readRoads();
 	void readRoutes();
 	void computeShortestLengths();
 	void outputResults();
+	void printAdjacency();
+	void printRoutes();
 
 private:
+	vector<vector<int>> routes;
+	vector<double> lengths;
+	vector<vector<double>> adjacency;
+	vector<vector<double>> adjacencyCopy;
+	vector<int> shortestRoute;
+
 	void computeShortestPaths(); 
+
+	template <typename T>
+	void print2DVector(vector<vector<T>> &v);
 };
 
 void RoadMap::readRoads()
@@ -70,51 +77,64 @@ void RoadMap::readRoutes()
 	}
 }
 
+// Parallelize?
 void RoadMap::computeShortestLengths()
 {
-	// Set the adjacency matrix so that it contains
-	// all the shortest paths to between any 2 locations
-	computeShortestPaths();
-	lengths.resize(routes.size());
-	double shortestLength = INFINITY;
 	int shortestRouteIndex;
-
-	for (int i = 0; i < routes.size(); i++)
+#pragma omp parallel
 	{
-		double total = 0;
-		cout << "Numbers for route " << i << ": ";
-		for (int j = 0; j < routes[i].size() - 1; j++)
+		// Set the adjacency matrix so that it contains
+		// all the shortest paths to between any 2 locations
+		computeShortestPaths();
+	#pragma omp single 
+			{
+				lengths.resize(routes.size());
+			}
+		double shortestLength = INFINITY;
+	#pragma omp for 
+		for (int i = 0; i < routes.size(); i++)
 		{
-			// Add up all the distances from each point in the route. 
-			total += adjacency[routes[i][j]][routes[i][j+1]];
-			cout << adjacency[routes[i][j]][routes[i][j + 1]] << " ";
-		}
-		lengths[i] = total;
-		cout << endl;
-		// Keep track of the shortest route
-		if (total < shortestLength)
-		{
-			shortestLength = total;
-			shortestRouteIndex = i;
+			double total = 0;
+			//cout << "Locations for route " << i << ":";
+			for (int j = 0; j < routes[i].size() - 1; j++)
+			{
+				// Add up all the distances from each point in the route. 
+				total += adjacency[routes[i][j]][routes[i][j + 1]];
+				//cout << " " << adjacency[routes[i][j]][routes[i][j + 1]];
+			}
+			//cout << endl;
+			lengths[i] = total;
+			// Keep track of the shortest route
+	#pragma omp critical
+			if (total < shortestLength)
+			{
+				shortestLength = total;
+				shortestRouteIndex = i;
+			}
 		}
 	}
-
 	shortestRoute = routes[shortestRouteIndex];
 }
 
+// Parallelize
 // Floyd-Warshall Algorithm
 // Calculates the shortest path between 
 // any 2 verticies in a graph
 void RoadMap::computeShortestPaths()
 {
+#pragma omp single
+	{
+		adjacencyCopy = adjacency;
+	}
 	const int locations = adjacency.size();
+#pragma omp for
 	for (int k = 0; k < locations; k++)
 	{
 		for (int i = 0; i < locations; i++)
 		{
 			for (int j = 0; j < locations; j++)
 			{
-				adjacency[i][j] = min(adjacency[i][j], adjacency[i][k] + adjacency[k][j]);
+				adjacency[i][j] = min(adjacencyCopy[i][j], adjacencyCopy[i][k] + adjacencyCopy[k][j]);
 			}
 		}
 	}
@@ -131,8 +151,20 @@ void RoadMap::outputResults()
 	cout << endl;
 }
 
+// Debug Function
+void RoadMap::printAdjacency()
+{
+	print2DVector(adjacency);
+}
+
+// Debug Function
+void RoadMap::printRoutes()
+{
+	print2DVector(routes);
+}
+
 template <typename T>
-void print2DVector(vector<vector<T>> &v)
+void RoadMap::print2DVector(vector<vector<T>> &v)
 {
 	// Const rational reference for speed
 	for (const vector<T> &row : v)
@@ -152,12 +184,12 @@ int main()
 	roadMap.readRoutes();
 	roadMap.computeShortestLengths();
 
+#ifdef DEBUG
 	cout << "New Adjacency Matrix: " << endl;
 	cout << "-------------------------------------" << endl;
-#ifdef DEBUG
-	print2DVector(roadMap.adjacency);
-#endif
+	roadMap.printAdjacency();
 	cout << "-------------------------------------" << endl;
-	
+#endif
+
 	roadMap.outputResults();
 }
