@@ -126,9 +126,10 @@ void RoadMap::computeShortestPaths()
 {
 	fillDistanceToSelf();
 	const int locations = adjacency.size();
+	int chunkSize = (locations >= 8) ? locations / 8 : 1;
 	for (int k = 0; k < locations; k++)
 	{
-#pragma omp for 
+#pragma omp for schedule (static, chunkSize)
 		for (int i = 0; i < locations; i++)
 		{
 			for (int j = 0; j < locations; j++)
@@ -141,7 +142,7 @@ void RoadMap::computeShortestPaths()
 
 void RoadMap::fillDistanceToSelf()
 {
-#pragma omp for 
+#pragma omp for schedule(static, (adjacency.size() >= 8) ? adjacency.size()/8 : 1)
 	for (int i = 0; i < adjacency.size(); i++)
 	{
 		adjacency[i][i] = 0;

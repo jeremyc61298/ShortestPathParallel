@@ -150,9 +150,6 @@
     <ClCompile Include="shortest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test1.in" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="RoadMap.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
